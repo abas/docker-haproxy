@@ -1,0 +1,35 @@
+version: '3'
+
+networks:
+  haproxy:
+
+services:
+  server1:
+    image: httpd
+    restart: unless-stopped
+    hostname: server1
+    depends_on:
+      - lb
+    networks:
+      - haproxy
+    volumes:
+      - ./server1:/usr/local/apache2/htdocs
+  server2:
+    image: httpd
+    hostname: server2
+    restart: unless-stopped
+    depends_on:
+      - lb
+    networks:
+      - haproxy
+    volumes:
+      - ./server2:/usr/local/apache2/htdocs
+  lb:
+    image: haproxy
+    hostname: lb
+    networks:
+      - haproxy
+    ports:
+      - 8000:80
+    volumes:
+      - ./haproxy:/usr/local/etc/haproxy
